@@ -7,6 +7,8 @@ ThandaShift turns hourly weather forecasts into **heat-stress levels for each wo
 - a short **WhatsApp-style alert** for each worker: safe hours, break rhythm, and the emergency number
 
 ## Try it
+**Live demo: https://rupangkan19.github.io/thandashift/**
+
 Open `index.html` through any static server (or GitHub Pages):
 ```bash
 python -m http.server 8000
