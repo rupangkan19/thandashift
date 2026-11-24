@@ -1,0 +1,151 @@
+{
+  "source": "Open-Meteo historical weather archive (ERA5-based), lat 26.14 lon 91.74, Apr 1 - Sep 30 2024",
+  "working_hours_analysed": 2379,
+  "hours_orange_or_worse": 250,
+  "pct_orange_or_worse": 10.5,
+  "hours_orange_or_worse_with_air_temp_below_37C": 246,
+  "pct_of_danger_hours_below_37C_air_temp": 98.4,
+  "hottest_day": "2024-09-23",
+  "hottest_day_peak_heat_index": 51.8,
+  "monthly": [
+    {
+      "month": "2024-04",
+      "work_hours": 390,
+      "green": 214,
+      "yellow": 176,
+      "orange": 0,
+      "red": 0,
+      "days_danger_or_worse": 0,
+      "max_temp": 38.8,
+      "max_heat_index": 38,
+      "avg_rh_work_hours": 59
+    },
+    {
+      "month": "2024-05",
+      "work_hours": 403,
+      "green": 156,
+      "yellow": 221,
+      "orange": 26,
+      "red": 0,
+      "days_danger_or_worse": 6,
+      "max_temp": 39.5,
+      "max_heat_index": 43.8,
+      "avg_rh_work_hours": 67
+    },
+    {
+      "month": "2024-06",
+      "work_hours": 390,
+      "green": 138,
+      "yellow": 232,
+      "orange": 20,
+      "red": 0,
+      "days_danger_or_worse": 7,
+      "max_temp": 32.9,
+      "max_heat_index": 43.3,
+      "avg_rh_work_hours": 83
+    },
+    {
+      "month": "2024-07",
+      "work_hours": 403,
+      "green": 63,
+      "yellow": 260,
+      "orange": 80,
+      "red": 0,
+      "days_danger_or_worse": 15,
+      "max_temp": 36.7,
+      "max_heat_index": 50,
+      "avg_rh_work_hours": 83
+    },
+    {
+      "month": "2024-08",
+      "work_hours": 403,
+      "green": 112,
+      "yellow": 258,
+      "orange": 33,
+      "red": 0,
+      "days_danger_or_worse": 9,
+      "max_temp": 34.1,
+      "max_heat_index": 44.2,
+      "avg_rh_work_hours": 82
+    },
+    {
+      "month": "2024-09",
+      "work_hours": 390,
+      "green": 72,
+      "yellow": 227,
+      "orange": 91,
+      "red": 0,
+      "days_danger_or_worse": 13,
+      "max_temp": 37.5,
+      "max_heat_index": 51.8,
+      "avg_rh_work_hours": 77
+    }
+  ],
+  "byHour": [
+    {
+      "hour": 6,
+      "pct_orange_or_worse": 0,
+      "avg_heat_index": 28.2
+    },
+    {
+      "hour": 7,
+      "pct_orange_or_worse": 1,
+      "avg_heat_index": 30
+    },
+    {
+      "hour": 8,
+      "pct_orange_or_worse": 2,
+      "avg_heat_index": 31.8
+    },
+    {
+      "hour": 9,
+      "pct_orange_or_worse": 7,
+      "avg_heat_index": 33.7
+    },
+    {
+      "hour": 10,
+      "pct_orange_or_worse": 11,
+      "avg_heat_index": 35.3
+    },
+    {
+      "hour": 11,
+      "pct_orange_or_worse": 16,
+      "avg_heat_index": 36.5
+    },
+    {
+      "hour": 12,
+      "pct_orange_or_worse": 22,
+      "avg_heat_index": 37.3
+    },
+    {
+      "hour": 13,
+      "pct_orange_or_worse": 22,
+      "avg_heat_index": 37.6
+    },
+    {
+      "hour": 14,
+      "pct_orange_or_worse": 21,
+      "avg_heat_index": 37.3
+    },
+    {
+      "hour": 15,
+      "pct_orange_or_worse": 16,
+      "avg_heat_index": 36.5
+    },
+    {
+      "hour": 16,
+      "pct_orange_or_worse": 10,
+      "avg_heat_index": 35.6
+    },
+    {
+      "hour": 17,
+      "pct_orange_or_worse": 6,
+      "avg_heat_index": 34.2
+    },
+    {
+      "hour": 18,
+      "pct_orange_or_worse": 2,
+      "avg_heat_index": 31.3
+    }
+  ]
+}

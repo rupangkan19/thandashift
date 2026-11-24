@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ThandaShift Prototype</title>
+<style>
+  :root { --bg:#f6f7f9; --card:#fff; --ink:#1f2937; --muted:#6b7280; --line:#e5e7eb;
+          --green:#bbf7d0; --yellow:#fde68a; --orange:#fdba74; --red:#fca5a5; --accent:#c2410c; }
+  * { box-sizing: border-box; }
+  body { margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; background:var(--bg); color:var(--ink); }
+  header { background:#0f172a; color:#fff; padding:14px 20px; }
+  header h1 { margin:0; font-size:20px; } header p { margin:2px 0 0; font-size:13px; opacity:.8; }
+  main { max-width:1150px; margin:0 auto; padding:16px; display:grid; gap:16px; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:14px 16px; }
+  .card h2 { margin:0 0 10px; font-size:16px; }
+  .controls { display:flex; flex-wrap:wrap; gap:12px; align-items:end; }
+  label { font-size:12.5px; color:var(--muted); display:flex; flex-direction:column; gap:4px; }
+  select, input, button { font:inherit; padding:7px 10px; border-radius:8px; border:1px solid #cbd5e1; background:#fff; }
+  button { background:var(--accent); color:#fff; border:none; cursor:pointer; font-weight:600; }
+  button.secondary { background:#334155; }
+  .grid2 { display:grid; grid-template-columns: 1.4fr 1fr; gap:16px; }
+  @media (max-width: 860px) { .grid2 { grid-template-columns: 1fr; } }
+  .strip { display:grid; grid-template-columns: repeat(13, 1fr); gap:3px; font-size:12px; text-align:center; }
+  .strip div { padding:6px 0; border-radius:4px; }
+  .green{background:var(--green)} .yellow{background:var(--yellow)} .orange{background:var(--orange)} .red{background:var(--red)}
+  table { width:100%; border-collapse:collapse; font-size:13.5px; }
+  th, td { border-bottom:1px solid var(--line); padding:6px; text-align:left; }
+  td select { padding:3px 6px; }
+  .phone { background:#e7ddd3; border-radius:14px; padding:10px; min-height:200px; }
+  .bubble { background:#fff; border-radius:8px; padding:10px; white-space:pre-wrap; font-size:13.5px; line-height:1.45; box-shadow:0 1px 1px rgba(0,0,0,.1); }
+  .muted { color:var(--muted); font-size:12.5px; }
+  .kpis { display:grid; grid-template-columns: repeat(4,1fr); gap:10px; }
+  .kpi { border:1px solid var(--line); border-radius:10px; padding:8px 10px; }
+  .kpi b { font-size:20px; display:block; }
+  .kpi span { font-size:12px; color:var(--muted); }
+  #status { font-size:13px; color:var(--muted); }
+  svg text { font-size:11px; fill:#475569; }
+</style>
+</head>
+<body>
+<header>
+  <h1>ThandaShift: heat-safe shift planner (prototype)</h1>
+  <p>Team Git Happens · GSC 2026-27 · Hourly heat-stress levels from live weather data, a suggested shift plan for supervisors, and a worker alert</p>
+</header>
+<main>
+  <section class="card">
+    <div class="controls">
+      <label>City
+        <select id="city">
+          <option value="26.14,91.74">Guwahati</option>
+          <option value="22.57,88.36">Kolkata</option>
+          <option value="28.61,77.21">Delhi</option>
+          <option value="23.02,72.57">Ahmedabad</option>
+          <option value="13.08,80.27">Chennai</option>
+        </select></label>
+      <label>Date
+        <select id="mode">
+          <option value="2024-09-23">Replay: 23 Sep 2024 (Guwahati's hottest day of 2024)</option>
+          <option value="2024-07-24">Replay: 24 Jul 2024</option>
+          <option value="today">Live forecast: today</option>
+          <option value="tomorrow">Live forecast: tomorrow</option>
+        </select></label>
+      <label>Heavy-work hours needed
+        <input id="heavy" type="number" min="0" max="13" value="5" style="width:90px"></label>
+      <label>Worker name
+        <input id="name" value="Bikash" style="width:120px"></label>
+      <button id="go">Get heat plan</button>
+      <span id="status"></span>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Hourly heat-stress level (working hours 6am–7pm)</h2>
+    <div id="chart"></div>
+    <div class="strip" id="strip"></div>
+    <p class="muted">Level = NWS heat index bands (°C): Green &lt;32 · Yellow 32–41 · Orange 41–54 · Red ≥54. "Feels like" combines temperature + humidity. Draft thresholds, to be reviewed by occupational-health experts.</p>
+    <div class="kpis" id="kpis"></div>
+  </section>
+
+  <div class="grid2">
+    <section class="card">
+      <h2>Supervisor: suggested shift plan (edit, then approve)</h2>
+      <table><thead><tr><th>Hour</th><th>Air °C</th><th>Humidity</th><th>Feels like °C</th><th>Level</th><th>Task</th></tr></thead><tbody id="plan"></tbody></table>
+      <p style="display:flex;gap:8px;margin:10px 0 0"><button id="approve">Approve plan</button><button class="secondary" id="csv">Download heat-safety log (CSV)</button></p>
+      <p class="muted" id="logInfo"></p>
+    </section>
+    <section class="card">
+      <h2>Worker: WhatsApp alert preview</h2>
+      <div class="phone"><div class="bubble" id="alert">Click “Get heat plan”.</div></div>
+      <p class="muted">In production this is sent at 6am on WhatsApp, or as a voice call for feature phones, in the worker's language (Assamese, Hindi, Bengali…).</p>
+    </section>
+  </div>
+  <p class="muted" style="text-align:center">Weather data: <a href="https://open-meteo.com/">Open-Meteo</a> (CC BY 4.0). Prototype for demonstration only, not medical advice.</p>
+</main>
+<script src="risk.js"></script>
+<script>
+const $ = id => document.getElementById(id);
+let current = null;
+const fmtH = h => `${((h + 11) % 12) + 1}${h < 12 ? 'am' : 'pm'}`;
+
+async function load() {
+  const [lat, lon] = $('city').value.split(',');
+  const mode = $('mode').value;
+  let url;
+  if (mode === 'today' || mode === 'tomorrow') {
+    url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&hourly=temperature_2m,relative_humidity_2m&timezone=Asia%2FKolkata&forecast_days=2`;
+  } else {
+    url = `https://archive-api.open-meteo.com/v1/archive?latitude=${lat}&longitude=${lon}&start_date=${mode}&end_date=${mode}&hourly=temperature_2m,relative_humidity_2m&timezone=Asia%2FKolkata`;
+  }
+  $('status').textContent = 'Loading weather…';
+  try {
+    const r = await fetch(url);
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const d = (await r.json()).hourly;
+    const day = mode === 'today' ? d.time[0].slice(0, 10) : mode === 'tomorrow' ? d.time[24].slice(0, 10) : mode;
+    const hours = [];
+    d.time.forEach((t, i) => {
+      const h = +t.slice(11, 13);
+      if (t.startsWith(day) && h >= 6 && h < 19 && d.temperature_2m[i] != null)
+        hours.push({ hour: h, temp: d.temperature_2m[i], rh: d.relative_humidity_2m[i], hi: ThandaRisk.heatIndex(d.temperature_2m[i], d.relative_humidity_2m[i]) });
+    });
+    if (!hours.length) throw new Error('No data for this date');
+    current = { city: $('city').selectedOptions[0].text, day, plan: ThandaRisk.planShifts(hours, +$('heavy').value) };
+    $('status').textContent = `${current.city}, ${day}`;
+    render();
+  } catch (e) {
+    $('status').textContent = 'Could not load weather (' + e.message + '). Check your connection and try again.';
+  }
+}
+
+function render() {
+  const p = current.plan;
+  $('strip').innerHTML = p.map(h => `<div class="${h.level.key}" title="${h.level.work}">${fmtH(h.hour)}<br><b>${Math.round(h.hi)}°</b></div>`).join('');
+  // line chart: air temp vs feels-like
+  const W = 1000, H = 170, pad = 30, xs = i => pad + i * (W - 2 * pad) / (p.length - 1);
+  const lo = Math.min(...p.map(h => h.temp)) - 3, hi = Math.max(...p.map(h => h.hi)) + 3, ys = v => H - 20 - (v - lo) * (H - 40) / (hi - lo);
+  const line = (k, c) => `<polyline fill="none" stroke="${c}" stroke-width="3" points="${p.map((h, i) => xs(i) + ',' + ys(h[k])).join(' ')}"/>`;
+  const band = [32, 41, 54].filter(v => v > lo && v < hi).map(v => `<line x1="${pad}" x2="${W - pad}" y1="${ys(v)}" y2="${ys(v)}" stroke="#cbd5e1" stroke-dasharray="4 4"/><text x="${W - pad + 2}" y="${ys(v) + 4}">${v}°</text>`).join('');
+  $('chart').innerHTML = `<svg viewBox="0 0 ${W} ${H}" width="100%" role="img" aria-label="Air temperature and feels-like temperature by hour">${band}${line('temp', '#64748b')}${line('hi', '#c2410c')}
+    ${p.map((h, i) => `<text x="${xs(i) - 10}" y="${H - 4}">${fmtH(h.hour)}</text>`).join('')}
+    <text x="${pad}" y="12" style="fill:#c2410c;font-weight:700">— Feels like (heat index)</text><text x="${pad + 190}" y="12" style="fill:#64748b;font-weight:700">— Air temperature</text></svg>`;
+  const cnt = k => p.filter(h => h.level.key === k).length;
+  const gap = Math.max(...p.map(h => h.hi - h.temp));
+  $('kpis').innerHTML = [
+    [Math.round(Math.max(...p.map(h => h.hi))) + '°C', 'peak "feels like"'],
+    [Math.round(Math.max(...p.map(h => h.temp))) + '°C', 'peak air temperature'],
+    [cnt('orange') + cnt('red') + ' h', 'hours at Orange or Red'],
+    ['+' + Math.round(gap) + '°C', 'max humidity penalty (feels-like minus air)'],
+  ].map(([b, s]) => `<div class="kpi"><b>${b}</b><span>${s}</span></div>`).join('');
+  $('plan').innerHTML = p.map((h, i) => `<tr><td>${fmtH(h.hour)}</td><td>${h.temp.toFixed(1)}</td><td>${h.rh}%</td><td><b>${h.hi.toFixed(1)}</b></td>
+    <td><span class="${h.level.key}" style="padding:2px 8px;border-radius:99px">${h.level.label}</span></td>
+    <td><select data-i="${i}">${['Heavy', 'Light', 'Rest'].map(t => `<option ${t === h.task ? 'selected' : ''}>${t}</option>`).join('')}</select></td></tr>`).join('');
+  document.querySelectorAll('#plan select').forEach(s => s.onchange = () => { current.plan[+s.dataset.i].task = s.value; warn(); });
+  $('alert').textContent = ThandaRisk.workerAlert($('name').value || 'there', p);
+  warn();
+}
+
+function warn() {
+  const bad = current.plan.filter(h => h.task === 'Heavy' && (h.level.key === 'orange' || h.level.key === 'red'));
+  $('logInfo').textContent = bad.length ? `⚠ Heavy work scheduled in ${bad.length} Orange/Red hour(s): ${bad.map(h => fmtH(h.hour)).join(', ')}. This will be recorded in the log.` : '';
+}
+
+function getLog() { try { return JSON.parse(localStorage.getItem('thandashift-log') || '[]'); } catch { return []; } }
+$('approve').onclick = () => {
+  if (!current) return;
+  const log = getLog();
+  current.plan.forEach(h => log.push({ approved_at: new Date().toISOString(), city: current.city, date: current.day, hour: h.hour,
+    air_c: h.temp, rh: h.rh, feels_like_c: +h.hi.toFixed(1), level: h.level.label, task: h.task }));
+  try { localStorage.setItem('thandashift-log', JSON.stringify(log)); } catch {}
+  window._log = log;
+  $('logInfo').textContent = `✔ Plan approved and saved to the heat-safety log (${log.length} entries).`;
+};
+$('csv').onclick = () => {
+  const log = window._log || getLog();
+  if (!log.length) { $('logInfo').textContent = 'Approve a plan first.'; return; }
+  const csv = [Object.keys(log[0]).join(','), ...log.map(o => Object.values(o).join(','))].join('\n');
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' }));
+  a.download = 'thandashift_heat_safety_log.csv'; a.click();
+};
+$('go').onclick = load;
+$('name').oninput = () => current && render();
+$('heavy').onchange = () => current && (current.plan = ThandaRisk.planShifts(current.plan, +$('heavy').value), render());
+load();
+</script>
+</body>
+</html>
